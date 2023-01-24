@@ -1,0 +1,18 @@
+version: "3.7"
+services:
+  client:
+    environment: 
+      - CHOKIDAR_USEPOLLING=true
+      - HOST=0.0.0.0
+      # - NODE_ENV=dev
+    build:
+      context: ./client
+      dockerfile: Dockerfile_dev
+    command: npm run serve
+    ports:
+      - 3000:3000
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - ./client:/app
+      - ./client/dist:/app/dist
+      - /app/node_modules

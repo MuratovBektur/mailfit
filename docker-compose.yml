@@ -1,0 +1,10 @@
+version: "3.7"
+services:
+  client:
+    environment: 
+      - CHOKIDAR_USEPOLLING=true
+      - HOST=0.0.0.0
+      - NODE_ENV=prod
+    build: client
+    ports:
+      - "80:80"
