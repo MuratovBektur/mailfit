@@ -98,9 +98,12 @@ import { isNil, debounce } from "lodash";
 import Input from "@/components/input.vue";
 import ConfirmModal from "@/components/confirm-modal.vue";
 import constants from "@/lib/constants.js";
+
 const deepClone = (obj) => {
   return JSON.parse(JSON.stringify(obj));
 };
+const delayBeforeGoToHistory = 100;
+
 export default {
   components: {
     Input,
@@ -113,7 +116,6 @@ export default {
       showEditModal: false,
       warnText: "",
       todoRefName: "todo-input_",
-      canPushNoteTitleToHistory: true,
       localeNotesVersionHistoryIdx: 0,
       prevTodosState: {},
       noteVersionHistory: [],
@@ -188,17 +190,12 @@ export default {
       }
     },
     goToPrevHistoryIdx: debounce(function () {
-      this.canPushNoteTitleToHistory = false;
       if (!this.localeNotesVersionHistoryIdx) return;
       const idx = this.localeNotesVersionHistoryIdx - 1;
       this.localeNotesVersionHistoryIdx = idx;
       this.localNote = deepClone(this.noteVersionHistory[idx]);
-      this.$nextTick(() => {
-        this.canPushNoteTitleToHistory = true;
-      });
-    }, 300),
+    }, delayBeforeGoToHistory),
     goToNextHistoryIdx: debounce(function () {
-      this.canPushNoteTitleToHistory = false;
       if (
         this.localeNotesVersionHistoryIdx >=
         this.noteVersionHistory.length - 1
@@ -207,10 +204,7 @@ export default {
       const idx = this.localeNotesVersionHistoryIdx + 1;
       this.localeNotesVersionHistoryIdx = idx;
       this.localNote = deepClone(this.noteVersionHistory[idx]);
-      this.$nextTick(() => {
-        this.canPushNoteTitleToHistory = true;
-      });
-    }, 300),
+    }, delayBeforeGoToHistory),
     editTodoTitle(todoId) {
       const todoList = this.todoList;
       const idx = todoList.findIndex((todo) => todo.id === todoId);
